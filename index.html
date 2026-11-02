@@ -90,6 +90,9 @@ main{position:relative;z-index:2}
 @keyframes bnc{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes pls{0%{box-shadow:0 0 0 0 rgba(255,255,255,.65)}70%{box-shadow:0 0 0 14px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
 @media (prefers-reduced-motion:reduce){.cta-ic,.cbtn .big{animation:none}}
+.priv{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:0 0 8px;font-size:14px;background:var(--soft)}
+.priv summary{cursor:pointer;color:var(--pri);font-weight:600}.priv div{margin-top:6px;color:var(--mut)}
+.rep .priv{display:none}
 </style>
 </head>
 <body>
@@ -116,11 +119,14 @@ main{position:relative;z-index:2}
   <button type="button" class="back" id="backTop">← Ganti periode</button>
   <div class="prog" id="prog"><span id="progT">Terisi 0%</span><div class="bar"><i id="progB"></i></div></div>
   <form id="f" novalidate>
+  <input type="text" id="hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0">
     <section class="card step" data-title="Data Responden">
       <h2 id="demoH">Demografi Responden</h2>
       <p class="sub" id="demoSub">Tanda <span class="req">*</span> wajib diisi.</p>
       <div class="rb hide" id="rbBox"><div><b>Data responden tersimpan</b><span id="rbText"></span></div><button type="button" class="back" id="rbEdit">Ubah data diri</button></div>
-      <div class="q-block" data-k="nama"><label class="q" for="nama">Nama Lengkap <span class="req">*</span></label><input type="text" id="nama" autocomplete="name"><div class="msg">Nama lengkap wajib diisi.</div></div>
+      <details class="priv"><summary>Pernyataan privasi &amp; penggunaan data</summary><div>Survei ini bersifat sukarela. Data yang Anda isi digunakan hanya untuk mengevaluasi dan meningkatkan kualitas pelayanan KPU Kabupaten Hulu Sungai Tengah, serta dilaporkan dalam bentuk rekapitulasi (agregat). Nama dan data pribadi Anda tidak dipublikasikan. Data disimpan secara terbatas dan hanya dapat diakses oleh pengelola survei. Pertanyaan tentang disabilitas bersifat data pribadi yang sensitif dan hanya dipakai untuk analisis kebutuhan layanan yang inklusif.</div></details>
+      <div class="q-block" data-k="setuju"><label class="opt"><input type="checkbox" id="setuju"><span>Saya telah membaca pernyataan privasi dan menyetujui data saya digunakan untuk evaluasi layanan.</span></label><div class="msg">Centang persetujuan untuk melanjutkan.</div></div>
+      <div class="q-block" data-k="nama"><label class="q" for="nama" id="namaL">Nama</label><input type="text" id="nama" autocomplete="name"><div class="msg">Nama lengkap wajib diisi.</div></div>
       <div class="q-block" data-k="tgl"><label class="q" for="tgl">Tanggal Menerima Layanan <span class="req">*</span></label><input type="date" id="tgl"><div class="sub" style="margin:4px 0 0"><span id="tglHint"></span></div><div class="msg" id="tglMsg">Pilih tanggal sesuai periode.</div></div>
       <div class="q-block" data-k="layanan"><span class="q-t">Jenis layanan yang diterima <span class="req">*</span></span><select id="layanan"></select><div class="msg">Pilih jenis layanan yang Anda terima.</div></div>
       <div class="q-block" data-k="jk"><span class="q-t">Jenis Kelamin <span class="req">*</span></span><div id="jk"></div><div class="msg">Pilih salah satu.</div></div>
@@ -135,6 +141,7 @@ main{position:relative;z-index:2}
 
     
 
+    <p id="sendErr" style="display:none;color:var(--pri);font-size:14px;text-align:center;margin:0 0 10px"></p>
     <div class="btns"><button type="button" class="s hide" id="prev">← Sebelumnya</button><button type="button" class="p" id="next">Selanjutnya →</button><button type="submit" class="p hide" id="send">Kirim Survei</button></div>
   </form>
 
@@ -165,14 +172,16 @@ main{position:relative;z-index:2}
 // Isi dengan URL Web App Google Apps Script (lihat petunjuk). Jika kosong, data TIDAK dikirim (mode uji).
 // ===== PENGATURAN PERIODE =====
 // Ubah aktif:true untuk membuka periode, aktif:false untuk menutupnya.
+// layanan:[...] = nomor layanan yang bisa dipilih pada periode itu (0=PPID, 1=Pendidikan Pemilih, 2=Pengaduan Masyarakat, 3=Kerjasama, 4=Pemutakhiran Data Pemilih, 5=Verifikasi & Pemutakhiran Data Partai Politik)
 var PERIODE=[
- {id:'tw1',nama:'Triwulan I',ket:'Januari – Maret 2026',tgl:'1 Januari – 31 Maret 2026',rentang:['2026-01-01','2026-03-31'],aktif:false},
- {id:'tw2',nama:'Triwulan II (Semester I)',ket:'April – Juni 2026',tgl:'1 April – 30 Juni 2026',rentang:['2026-04-01','2026-06-30'],aktif:false},
- {id:'tw3',nama:'Triwulan III',ket:'Juli – September 2026',tgl:'1 Juli – 30 September 2026',rentang:['2026-07-01','2026-09-30'],aktif:false},
- {id:'tw4',nama:'Triwulan IV (Semester II)',ket:'Oktober – Desember 2026',tgl:'1 Oktober – 31 Desember 2026',rentang:['2026-10-01','2026-12-31'],aktif:true}
+ {id:'tw1',nama:'Triwulan I',ket:'Januari – Maret 2026',tgl:'1 Januari – 31 Maret 2026',rentang:['2026-01-01','2026-03-31'],aktif:false,layanan:[0,1,2,3]},
+ {id:'tw2',nama:'Triwulan II (Semester I)',ket:'April – Juni 2026',tgl:'1 April – 30 Juni 2026',rentang:['2026-04-01','2026-06-30'],aktif:false,layanan:[0,1,2,3,4,5]},
+ {id:'tw3',nama:'Triwulan III',ket:'Juli – September 2026',tgl:'1 Juli – 30 September 2026',rentang:['2026-07-01','2026-09-30'],aktif:false,layanan:[0,1,2,3]},
+ {id:'tw4',nama:'Triwulan IV (Semester II)',ket:'Oktober – Desember 2026',tgl:'1 Oktober – 31 Desember 2026',rentang:['2026-10-01','2026-12-31'],aktif:true,layanan:[0,1,2,3,4,5]}
 ];
 // ===== AKHIR PENGATURAN PERIODE =====
-var cur=null,doneL=[];
+var cur=null,doneL=[],t0=Date.now();
+var NAMA_WAJIB=false; // true = nama wajib diisi
 var SCRIPT_URL='https://script.google.com/macros/s/AKfycbwa9CvNHjS-Ysk2XF9AXEw-DeLIrKiD_fH0fQWFeQtIXNYEy_diGqNE-9BscUKyJxyFkA/exec';
 var U=[
 [
@@ -338,7 +347,8 @@ var U=[
 ];
 var $=function(i){return document.getElementById(i)};
 function radios(box,name,list,cb){$(box).innerHTML=list.map(function(t,i){return '<label class="opt"><input type="radio" name="'+name+'" value="'+t+'"><span>'+t+'</span></label>'}).join('')}
-sel('layanan',['Layanan Pejabat Pengelola Informasi dan Dokumentasi (PPID)','Layanan Pendidikan Pemilih','Layanan Pengaduan Masyarakat','Layanan Kerjasama','Layanan Pemutakhiran Data Pemilih','Layanan Verifikasi dan Pemutakhiran Data Partai Politik']);
+var LAYANAN=['Layanan Pejabat Pengelola Informasi dan Dokumentasi (PPID)','Layanan Pendidikan Pemilih','Layanan Pengaduan Masyarakat','Layanan Kerjasama','Layanan Pemutakhiran Data Pemilih','Layanan Verifikasi dan Pemutakhiran Data Partai Politik'];
+sel('layanan',LAYANAN);
 radios('jk','jk',['Laki-Laki','Perempuan']);
 radios('dis','dis',['Ya','Tidak']);
 $('disJenis').innerHTML=['Disabilitas Fisik (Tuna Daksa)','Disabilitas Intelektual (Gangguan Kemampuan Belajar, Tuna Grahita, Down Syndrome)','Disabilitas Mental (Autisme, ADHD Tuna Laras)','Disabilitas Sensory (Tuli, Tuna Rungu, Tuna Netra)'].map(function(t){return '<label class="opt"><input type="checkbox" name="disjenis" value="'+t+'"><span>'+t+'</span></label>'}).join('');
@@ -377,7 +387,7 @@ function showStep(i){
 function progress(){
   var dj=val('dis')==='Ya',total=7+U.length+(dj?1:0),done=0;
   if(val('layanan'))done++;
-  if($('nama').value.trim())done++;
+  if(NAMA_WAJIB?$('nama').value.trim():$('setuju').checked)done++;
   if($('tgl').value)done++;
   if(val('jk'))done++;
   if($('pend').value)done++;
@@ -406,7 +416,7 @@ function runChecks(scope){
   var bad=[];
   function chk(k,ok){var b=f.querySelector('[data-k="'+k+'"]');if(!b||(scope&&!scope.contains(b)))return;b.classList.toggle('bad',!ok);if(!ok)bad.push(b)}
   chk('layanan',!!val('layanan'));
-  chk('nama',!!$('nama').value.trim());
+  chk('setuju',$('setuju').checked);chk('nama',!NAMA_WAJIB||!!$('nama').value.trim());
   var t=$('tgl').value;chk('tgl',!!t&&t>=cur.rentang[0]&&t<=cur.rentang[1]);
   chk('jk',!!val('jk'));chk('pend',!!$('pend').value);
   chk('kerja',!!val('kerja')&&(val('kerja')!=='Lainnya'||!!$('kerjaLain').value.trim()));
@@ -431,7 +441,7 @@ f.addEventListener('submit',function(e){
   var pay={waktu_kirim:new Date().toISOString(),nama:$('nama').value.trim(),tanggal_layanan:t,jenis_layanan:val('layanan'),jenis_kelamin:val('jk'),pendidikan:$('pend').value,usia:$('usia').value,
     pekerjaan:val('kerja')==='Lainnya'?'Lainnya: '+$('kerjaLain').value.trim():val('kerja'),disabilitas:val('dis')};
   U.forEach(function(u,n){pay['U'+(n+1)+' '+u[0].replace(/&amp;/g,'&')]=+val('u'+n)});
-  pay.rata_rata=Math.round(sum/U.length*100)/100;pay.nilai_ikm=ikm;pay.mutu=mutu(ikm);pay.saran=$('saran').value.trim();pay.periode=cur.nama+' Tahun 2026';pay.jenis_disabilitas=disSel().join('; ');
+  pay.rata_rata=Math.round(sum/U.length*100)/100;pay.nilai_ikm=ikm;pay.mutu=mutu(ikm);pay.saran=$('saran').value.trim();pay.periode=cur.nama+' Tahun 2026';pay.jenis_disabilitas=disSel().join('; ');pay.id_kiriman=uid();pay.durasi_detik=Math.round((Date.now()-t0)/1000);pay.persetujuan='Ya';pay.hp=$('hp').value;
   var btn=f.querySelector('button[type=submit]'),old=btn.textContent;btn.disabled=true;btn.textContent='Mengirim…';
   function show(note){
     if(doneL.indexOf(pay.jenis_layanan)<0)doneL.push(pay.jenis_layanan);
@@ -440,15 +450,42 @@ f.addEventListener('submit',function(e){
     btn.disabled=false;btn.textContent=old;window.scrollTo({top:0,behavior:'smooth'});
   }
   if(!SCRIPT_URL){show('Mode uji: SCRIPT_URL belum diisi sehingga jawaban belum tersimpan ke Google Sheets.');return}
-  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(pay)})
-    .then(function(){show('')})
-    .catch(function(){btn.disabled=false;btn.textContent=old;alert('Gagal mengirim. Periksa koneksi internet Anda lalu coba lagi.')});
+  $('sendErr').style.display='none';
+  tryPost(pay).then(function(r){
+    if(r.s==='ok'){$('note').setAttribute('data-q','0');show('')}
+    else if(r.s==='net'){qAdd(pay);$('note').setAttribute('data-q','1');show('⚠ Koneksi bermasalah. Jawaban Anda tersimpan di perangkat dan akan dikirim otomatis begitu koneksi tersedia. Mohon jangan menutup atau menghapus data peramban dulu.')}
+    else{btn.disabled=false;btn.textContent=old;$('sendErr').textContent='Jawaban belum dapat disimpan: '+r.m;$('sendErr').style.display='block'}
+  });
 });
+// ===== Pengiriman terverifikasi + antrean kirim ulang =====
+function uid(){try{return crypto.randomUUID()}catch(e){return 'id-'+Date.now().toString(36)+Math.random().toString(36).slice(2,10)}}
+async function tryPost(d){
+  var j;
+  try{var r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(d)});j=await r.json()}catch(e){return {s:'net'}}
+  return j&&j.ok?{s:'ok'}:{s:'err',m:(j&&j.error)||'Server menolak data.'};
+}
+function qGet(){try{return JSON.parse(localStorage.getItem('skmQ')||'[]')}catch(e){return []}}
+function qSet(q){try{localStorage.setItem('skmQ',JSON.stringify(q))}catch(e){}}
+function qAdd(d){var q=qGet();q.push({d:d,a:0});qSet(q)}
+var flushing=false;
+async function flush(){
+  if(flushing||!SCRIPT_URL)return;var q=qGet();if(!q.length)return;flushing=true;var keep=[];
+  for(var i=0;i<q.length;i++){
+    var r=await tryPost(q[i].d);
+    if(r.s==='ok'||r.s==='err')continue;
+    q[i].a++;
+    if(q[i].a>=3){try{fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(q[i].d)})}catch(e){}continue}
+    keep.push(q[i]);
+  }
+  qSet(keep);flushing=false;
+  if(!keep.length&&$('note').getAttribute('data-q')==='1'){$('note').textContent='✓ Jawaban Anda yang tertunda sudah berhasil terkirim. Terima kasih!';$('note').setAttribute('data-q','0')}
+}
+window.addEventListener('online',flush);setInterval(flush,30000);
 var SHORT=['PPID','Pendidikan Pemilih','Pengaduan Masyarakat','Kerjasama','Pemutakhiran Data Pemilih','Verifikasi Data Parpol'];
 function renderCta(){
   var opts=Array.prototype.slice.call($('layanan').options).filter(function(o){return o.value});
   var n=opts.length,d=doneL.length,all=d>=n;
-  $('chips').innerHTML=opts.map(function(o,i){var ok=doneL.indexOf(o.value)>=0;return '<span class="chip'+(ok?' ok':'')+'">'+(ok?'✓ ':'')+(SHORT[i]||o.value)+'</span>'}).join('');
+  $('chips').innerHTML=opts.map(function(o,i){var ok=doneL.indexOf(o.value)>=0;return '<span class="chip'+(ok?' ok':'')+'">'+(ok?'✓ ':'')+(SHORT[LAYANAN.indexOf(o.value)]||o.value)+'</span>'}).join('');
   $('cbarI').style.width=Math.round(d/n*100)+'%';
   $('cbarT').textContent=d+' dari '+n+' layanan sudah Anda nilai';
   $('ctaIc').textContent=all?'🎉':'🙌';
@@ -469,11 +506,11 @@ function setRep(on){
 }
 $('again').addEventListener('click',function(){
   // Data diri tetap tersimpan; hanya layanan, penilaian, dan saran yang dikosongkan
-  refreshLayanan();$('layanan').value='';$('saran').value='';
+  t0=Date.now();refreshLayanan();$('layanan').value='';$('saran').value='';
   f.querySelectorAll('input[name^="u"]').forEach(function(x){x.checked=false});
   f.querySelectorAll('.bad').forEach(function(x){x.classList.remove('bad')});
   $('tgl').value='';
-  $('rbText').textContent=$('nama').value.trim();
+  $('rbText').textContent=$('nama').value.trim()||'Responden';
   setRep(true);
   f.classList.remove('hide');$('prog').classList.remove('hide');$('res').classList.add('hide');showStep(0);
 });
@@ -481,7 +518,7 @@ $('rbEdit').addEventListener('click',function(){setRep(false);window.scrollTo({t
 
 function showView(v){$('viewPick').classList.toggle('hide',v!=='pick');$('viewForm').classList.toggle('hide',v!=='form');window.scrollTo({top:0,behavior:'smooth'})}
 function openP(p){
-  cur=p;$('perLbl').textContent=p.nama.toUpperCase()+' TAHUN 2026';
+  cur=p;t0=Date.now();sel('layanan',(p.layanan||LAYANAN.map(function(_,i){return i})).map(function(i){return LAYANAN[i]}));$('perLbl').textContent=p.nama.toUpperCase()+' TAHUN 2026';
   document.title='Survei Kepuasan Masyarakat – '+p.nama+' Tahun 2026 – KPU Kab. Hulu Sungai Tengah';
   $('tgl').min=p.rentang[0];$('tgl').max=p.rentang[1];
   $('tglHint').textContent='Periode layanan '+p.nama+': '+p.tgl+'.';
@@ -503,6 +540,8 @@ function renderPick(){
 $('pgrid').addEventListener('click',function(e){var b=e.target.closest('.pc');if(b&&!b.disabled)openP(PERIODE[+b.getAttribute('data-i')])});
 $('backTop').addEventListener('click',backPick);$('backRes').addEventListener('click',backPick);
 renderPick();
+$('namaL').innerHTML=NAMA_WAJIB?'Nama Lengkap <span class="req">*</span>':'Nama <small style="font-weight:400;color:var(--mut)">(opsional — boleh dikosongkan atau diisi inisial)</small>';
+flush();
 var h=location.hash.slice(1);PERIODE.forEach(function(p){if(p.id===h&&p.aktif)openP(p)});
 })();
 </script>

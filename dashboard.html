@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Dashboard SKM – KPU Kabupaten Hulu Sungai Tengah</title>
+<style>
+:root{--bg:#f6f1f0;--card:#fff;--ink:#241a1a;--mut:#6b5b5b;--line:#e3d6d4;--pri:#9b1c24;--soft:#fbeeee;--bar:#b3262e}
+@media (prefers-color-scheme:dark){:root{--bg:#171212;--card:#221a1a;--ink:#f3eaea;--mut:#b5a3a3;--line:#3a2d2d;--pri:#e0525a;--soft:#2e1d1e;--bar:#e0525a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:linear-gradient(90deg,#7d1410,#3a0808 50%,#7d1410);color:#fff;padding:18px 16px;text-align:center}
+header b{display:block;font-size:18px}header span{opacity:.85;font-size:13px}
+main{max-width:980px;margin:0 auto;padding:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+h2{margin:0 0 10px;font-size:16px;color:var(--pri)}
+input,select,button{font:inherit;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+button{background:var(--pri);color:#fff;border-color:var(--pri);font-weight:600;cursor:pointer}button.s{background:transparent;color:var(--pri)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.k{background:var(--soft);border-radius:12px;padding:12px;text-align:center}.k b{display:block;font-size:26px;color:var(--pri)}.k small{color:var(--mut)}
+.b{display:grid;grid-template-columns:minmax(120px,38%) 1fr 64px;gap:8px;align-items:center;margin:6px 0;font-size:13px}
+.t{height:12px;background:var(--line);border-radius:9px;overflow:hidden}.t i{display:block;height:100%;background:var(--bar);border-radius:9px}
+.b em{font-style:normal;text-align:right;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line)}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.sr{padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}.sr small{color:var(--mut);display:block}
+.err{color:var(--pri);margin:8px 0}.hide{display:none}
+@media print{header,.row,#logout{display:none}.card{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header><b>Dashboard Survei Kepuasan Masyarakat</b><span>KPU Kabupaten Hulu Sungai Tengah · Khusus pengelola</span></header>
+<main>
+ <section class="card" id="login"><h2>Masuk</h2>
+  <div class="row"><input type="password" id="key" placeholder="Kata sandi dashboard" autocomplete="current-password"><button id="go">Masuk</button></div>
+  <p class="err" id="err"></p></section>
+ <div id="app" class="hide">
+  <section class="card"><div class="row"><b>Periode:</b><select id="per"></select><button class="s" id="reload">Muat ulang</button><button class="s" onclick="print()">Cetak</button><button class="s" id="logout">Keluar</button><small id="gen" style="color:var(--mut)"></small></div></section>
+  <section class="card"><div class="kpi" id="kpi"></div></section>
+  <section class="card"><h2>Rata-rata per pertanyaan (skala 1–4)</h2><div id="unsur"></div></section>
+  <section class="card"><h2>Nilai per jenis layanan</h2><div style="overflow-x:auto"><table id="lay"></table></div></section>
+  <section class="card"><h2>Profil responden</h2><div class="g" id="demo"></div></section>
+  <section class="card"><h2>Kritik &amp; saran terbaru</h2><div id="saran"></div></section>
+ </div>
+</main>
+<script>
+var SCRIPT_URL='https://script.google.com/macros/s/AKfycbwa9CvNHjS-Ysk2XF9AXEw-DeLIrKiD_fH0fQWFeQtIXNYEy_diGqNE-9BscUKyJxyFkA/exec';
+var Q=['Informasi pelayanan tersedia (elektronik & non-elektronik)','Kesesuaian persyaratan dengan informasi','Standar & prosedur diinformasikan jelas','Alur layanan mudah dipahami & dilakukan','Layanan sesuai prosedur tanpa kecurangan','Jangka waktu sesuai yang diinformasikan','Biaya sesuai yang diinformasikan','Tidak ada pungutan liar','Tidak ada percaloan / perantara tidak resmi','Produk layanan sesuai yang dipublikasikan','Kompetensi petugas memadai','Petugas ramah, sopan, membantu','Dilayani adil tanpa diskriminasi','Tanpa imbalan di luar aturan','Konsultasi & pengaduan mudah diakses','Sarana & prasarana mendukung layanan'];
+var D=null,$=function(i){return document.getElementById(i)};
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function mutu(s){return s>=88.31?'A – Sangat Baik':s>=76.61?'B – Baik':s>=65?'C – Kurang Baik':'D – Tidak Baik'}
+async function load(k){
+  $('err').textContent='';
+  try{var r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'stats',key:k})});var j=await r.json();
+    if(!j.ok){$('err').textContent=j.error;return false}
+    D=j;sessionStorage.setItem('skmKey',k);$('login').classList.add('hide');$('app').classList.remove('hide');init();return true}
+  catch(e){$('err').textContent='Tidak dapat terhubung ke server. Periksa koneksi atau SCRIPT_URL.';return false}
+}
+function init(){
+  var cur=$('per').value,ps=Object.keys(D.periode);
+  $('per').innerHTML='<option value="">Semua periode</option>'+ps.map(function(p){return '<option>'+esc(p)+'</option>'}).join('');
+  $('per').value=ps.indexOf(cur)>=0?cur:'';$('gen').textContent='Diperbarui '+new Date(D.dibuat).toLocaleString('id-ID');render();
+}
+function agg(per){
+  var A={n:0,s:0,u:Q.map(function(){return 0}),lay:{},demo:{jk:{},pend:{},usia:{},kerja:{},dis:{}}};
+  Object.keys(D.periode).forEach(function(p){
+    if(per&&p!==per)return;var P=D.periode[p];A.n+=P.n;A.s+=P.s;P.u.forEach(function(x,i){A.u[i]+=x});
+    Object.keys(P.lay).forEach(function(l){var a=A.lay[l]||(A.lay[l]={n:0,s:0});a.n+=P.lay[l].n;a.s+=P.lay[l].s});
+    Object.keys(A.demo).forEach(function(g){Object.keys(P.demo[g]).forEach(function(k){A.demo[g][k]=(A.demo[g][k]||0)+P.demo[g][k]})});
+  });return A;
+}
+function bars(items,max,fmt){return items.map(function(x){return '<div class="b"><span>'+esc(x[0])+'</span><div class="t"><i style="width:'+Math.round(x[1]/max*100)+'%"></i></div><em>'+fmt(x[1])+'</em></div>'}).join('')||'<small>Belum ada data.</small>'}
+function render(){
+  var per=$('per').value,A=agg(per),ikm=A.n?A.s/A.n:0;
+  $('kpi').innerHTML='<div class="k"><b>'+A.n+'</b><small>Penilaian layanan masuk</small></div><div class="k"><b>'+ikm.toFixed(2)+'</b><small>Nilai IKM (25–100)</small></div><div class="k"><b>'+(A.n?mutu(ikm).split(' – ')[0]:'-')+'</b><small>'+(A.n?mutu(ikm).split(' – ')[1]:'Belum ada data')+'</small></div><div class="k"><b>'+Object.keys(A.lay).length+'</b><small>Jenis layanan terisi</small></div>';
+  $('unsur').innerHTML=bars(Q.map(function(q,i){return [(i+1)+'. '+q,A.n?A.u[i]/A.n:0]}),4,function(v){return v.toFixed(2)});
+  $('lay').innerHTML='<tr><th>Layanan</th><th>Penilaian</th><th>IKM</th><th>Mutu</th></tr>'+Object.keys(A.lay).sort().map(function(l){var a=A.lay[l],v=a.s/a.n;return '<tr><td>'+esc(l)+'</td><td>'+a.n+'</td><td>'+v.toFixed(2)+'</td><td>'+mutu(v)+'</td></tr>'}).join('');
+  var T={jk:'Jenis kelamin',pend:'Pendidikan',usia:'Usia',kerja:'Pekerjaan',dis:'Penyandang disabilitas'};
+  $('demo').innerHTML=Object.keys(T).map(function(g){var it=Object.keys(A.demo[g]).map(function(k){return [k,A.demo[g][k]]}).sort(function(a,b){return b[1]-a[1]});
+    return '<div><b>'+T[g]+'</b>'+bars(it,A.n||1,function(v){return v+' ('+Math.round(v/(A.n||1)*100)+'%)'})+'</div>'}).join('');
+  var sr=D.saran.filter(function(x){return !per||x.p===per});
+  $('saran').innerHTML=sr.length?sr.map(function(x){return '<div class="sr">'+esc(x.s)+'<small>'+esc(x.p)+' · '+esc(x.l)+(x.t?' · '+esc(x.t):'')+'</small></div>'}).join(''):'<small>Belum ada kritik atau saran.</small>';
+}
+$('go').onclick=function(){load($('key').value)};$('key').onkeydown=function(e){if(e.key==='Enter')load(this.value)};
+$('per').onchange=render;$('reload').onclick=function(){load(sessionStorage.getItem('skmKey')||'')};
+$('logout').onclick=function(){sessionStorage.removeItem('skmKey');location.reload()};
+var k0=sessionStorage.getItem('skmKey');if(k0)load(k0);
+</script>
+</body>
+</html>
