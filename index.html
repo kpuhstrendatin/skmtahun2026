@@ -406,6 +406,9 @@ f.addEventListener('input',function(e){
 });
 f.addEventListener('reset',function(){setTimeout(function(){$('kerjaLain').classList.add('hide');$('disBox').classList.add('hide');progress()},0)});
 
+// Metode template SKM: nilai unsur = rata-rata pertanyaannya; IKM = rata-rata 9 unsur, dikonversi x25
+var UG=[[0,1],[2,3,4],[5],[6,7,8],[9],[10],[11,12,13],[14],[15]];
+function ikmUnsur(v){var t=0;UG.forEach(function(g){var s=0;g.forEach(function(i){s+=v[i]});t+=s/g.length});return Math.round(t/UG.length*25*100)/100}
 function mutu(s){
   if(s>=88.31)return 'Mutu A – Sangat Baik';
   if(s>=76.61)return 'Mutu B – Baik';
@@ -436,12 +439,12 @@ f.addEventListener('submit',function(e){
   var t=$('tgl').value;
   var sum=0,rows='';
   U.forEach(function(u,n){var v=+val('u'+n);sum+=v;rows+='<div class="row"><span>'+(n+1)+'. '+u[1].slice(0,60)+(u[1].length>60?'…':'')+'</span><b>'+u[2][v-1]+' ('+v+')</b></div>'});
-  var ikm=Math.round(sum/U.length*25*100)/100;
+  var ikm=ikmUnsur(U.map(function(_,n){return +val('u'+n)}));
   $('ikm').textContent=ikm.toFixed(2);$('mutu').textContent=mutu(ikm);$('detail').innerHTML=rows;
   var pay={waktu_kirim:new Date().toISOString(),nama:$('nama').value.trim(),tanggal_layanan:t,jenis_layanan:val('layanan'),jenis_kelamin:val('jk'),pendidikan:$('pend').value,usia:$('usia').value,
     pekerjaan:val('kerja')==='Lainnya'?'Lainnya: '+$('kerjaLain').value.trim():val('kerja'),disabilitas:val('dis')};
   U.forEach(function(u,n){pay['U'+(n+1)+' '+u[0].replace(/&amp;/g,'&')]=+val('u'+n)});
-  pay.rata_rata=Math.round(sum/U.length*100)/100;pay.nilai_ikm=ikm;pay.mutu=mutu(ikm);pay.saran=$('saran').value.trim();pay.periode=cur.nama+' Tahun 2026';pay.jenis_disabilitas=disSel().join('; ');pay.id_kiriman=uid();pay.durasi_detik=Math.round((Date.now()-t0)/1000);pay.persetujuan='Ya';pay.hp=$('hp').value;
+  pay.rata_rata=Math.round(ikm/25*100)/100;pay.nilai_ikm=ikm;pay.mutu=mutu(ikm);pay.saran=$('saran').value.trim();pay.periode=cur.nama+' Tahun 2026';pay.jenis_disabilitas=disSel().join('; ');pay.id_kiriman=uid();pay.durasi_detik=Math.round((Date.now()-t0)/1000);pay.persetujuan='Ya';pay.hp=$('hp').value;
   var btn=f.querySelector('button[type=submit]'),old=btn.textContent;btn.disabled=true;btn.textContent='Mengirim…';
   function show(note){
     if(doneL.indexOf(pay.jenis_layanan)<0)doneL.push(pay.jenis_layanan);

@@ -11,35 +11,45 @@
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 header{background:linear-gradient(90deg,#7d1410,#3a0808 50%,#7d1410);color:#fff;padding:18px 16px;text-align:center}
 header b{display:block;font-size:18px}header span{opacity:.85;font-size:13px}
-main{max-width:980px;margin:0 auto;padding:14px}
+main{max-width:1040px;margin:0 auto;padding:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
-h2{margin:0 0 10px;font-size:16px;color:var(--pri)}
-input,select,button{font:inherit;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+h2{margin:0 0 4px;font-size:16px;color:var(--pri)}.sub{margin:0 0 10px;color:var(--mut);font-size:13px}
+input,select,button{font:inherit;padding:9px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
 button{background:var(--pri);color:#fff;border-color:var(--pri);font-weight:600;cursor:pointer}button.s{background:transparent;color:var(--pri)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .k{background:var(--soft);border-radius:12px;padding:12px;text-align:center}.k b{display:block;font-size:26px;color:var(--pri)}.k small{color:var(--mut)}
-.b{display:grid;grid-template-columns:minmax(120px,38%) 1fr 64px;gap:8px;align-items:center;margin:6px 0;font-size:13px}
+.b{display:grid;grid-template-columns:minmax(120px,38%) 1fr 78px;gap:8px;align-items:center;margin:6px 0;font-size:13px}
 .t{height:12px;background:var(--line);border-radius:9px;overflow:hidden}.t i{display:block;height:100%;background:var(--bar);border-radius:9px}
 .b em{font-style:normal;text-align:right;font-weight:600}
-table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line)}
-.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td.w,th.w{white-space:normal}.n{text-align:right}.gt td{font-weight:700;background:var(--soft)}
+.ov{overflow-x:auto}.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
 .sr{padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}.sr small{color:var(--mut);display:block}
-.err{color:var(--pri);margin:8px 0}.hide{display:none}
+.pill{display:inline-block;min-width:22px;text-align:center;border-radius:6px;padding:0 6px;font-weight:700;background:var(--soft);color:var(--pri)}
+.err{color:var(--pri);margin:8px 0}.hide{display:none}.pr li{margin:4px 0}
 @media print{header,.row,#logout{display:none}.card{break-inside:avoid}}
 </style>
 </head>
 <body>
-<header><b>Dashboard Survei Kepuasan Masyarakat</b><span>KPU Kabupaten Hulu Sungai Tengah · Khusus pengelola</span></header>
+<header><b>Dashboard Survei Kepuasan Masyarakat</b><span>KPU Kabupaten Hulu Sungai Tengah · Perhitungan mengikuti Template SKM 16 Item Pertanyaan</span></header>
 <main>
  <section class="card" id="login"><h2>Masuk</h2>
   <div class="row"><input type="password" id="key" placeholder="Kata sandi dashboard" autocomplete="current-password"><button id="go">Masuk</button></div>
   <p class="err" id="err"></p></section>
  <div id="app" class="hide">
-  <section class="card"><div class="row"><b>Periode:</b><select id="per"></select><button class="s" id="reload">Muat ulang</button><button class="s" onclick="print()">Cetak</button><button class="s" id="logout">Keluar</button><small id="gen" style="color:var(--mut)"></small></div></section>
+  <section class="card"><div class="row"><b>Periode:</b><select id="per"></select><button class="s" id="reload">Muat ulang</button><button class="s" id="csv">Unduh rekap (CSV)</button><button class="s" onclick="print()">Cetak</button><button class="s" id="logout">Keluar</button><small id="gen" style="color:var(--mut)"></small></div></section>
   <section class="card"><div class="kpi" id="kpi"></div></section>
-  <section class="card"><h2>Rata-rata per pertanyaan (skala 1–4)</h2><div id="unsur"></div></section>
-  <section class="card"><h2>Nilai per jenis layanan</h2><div style="overflow-x:auto"><table id="lay"></table></div></section>
+  <section class="card"><h2>Kecukupan sampel</h2><p class="sub">Sampel minimal = (3,841 × N × 0,25) ÷ ((N−1) × 0,0025 + 3,841 × 0,25), sesuai sheet "Rumus Perhitungan Sampel".</p>
+   <div class="row"><label>Populasi (N)</label><input type="number" id="pop" min="1" style="width:130px" placeholder="mis. 1200"><span id="samp"></span></div>
+   <div class="t" style="margin-top:8px;max-width:520px"><i id="sampB" style="width:0"></i></div></section>
+  <section class="card"><h2>Hasil per unsur pelayanan</h2><p class="sub">Nilai unsur = rata-rata pertanyaannya · Nilai konversi = nilai × 25 · Kategori: A ≥ 3,5324 · B ≥ 3,0644 · C ≥ 2,6 · D ≥ 1</p><div class="ov"><table id="unsur"></table></div></section>
+  <section class="card"><h2>Unsur prioritas perbaikan</h2><p class="sub">Tiga unsur dengan nilai terendah.</p><ol class="pr" id="prio"></ol></section>
+  <section class="card"><h2>Nilai per pertanyaan (skala 1–4)</h2><div id="pq"></div></section>
+  <section class="card"><h2>Nilai per jenis layanan</h2><p class="sub">Rata-rata tiap pertanyaan (skala 1–4)</p><div class="ov"><table id="layP"></table></div>
+   <p class="sub" style="margin-top:14px">Nilai konversi per unsur (U1–U9 = Persyaratan … Sarpras) dan IKM</p><div class="ov"><table id="layU"></table></div></section>
+  <section class="card"><h2>Kepuasan kelompok rentan per kategori disabilitas</h2><p class="sub">Responden yang memilih lebih dari satu jenis disabilitas dihitung pada setiap jenis yang dipilih.</p><div class="ov"><table id="dsbP"></table></div>
+   <p class="sub" style="margin-top:14px">Nilai konversi per unsur dan IKM</p><div class="ov"><table id="dsbU"></table></div></section>
   <section class="card"><h2>Profil responden</h2><div class="g" id="demo"></div></section>
   <section class="card"><h2>Kritik &amp; saran terbaru</h2><div id="saran"></div></section>
  </div>
@@ -47,9 +57,19 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 <script>
 var SCRIPT_URL='https://script.google.com/macros/s/AKfycbwa9CvNHjS-Ysk2XF9AXEw-DeLIrKiD_fH0fQWFeQtIXNYEy_diGqNE-9BscUKyJxyFkA/exec';
 var Q=['Informasi pelayanan tersedia (elektronik & non-elektronik)','Kesesuaian persyaratan dengan informasi','Standar & prosedur diinformasikan jelas','Alur layanan mudah dipahami & dilakukan','Layanan sesuai prosedur tanpa kecurangan','Jangka waktu sesuai yang diinformasikan','Biaya sesuai yang diinformasikan','Tidak ada pungutan liar','Tidak ada percaloan / perantara tidak resmi','Produk layanan sesuai yang dipublikasikan','Kompetensi petugas memadai','Petugas ramah, sopan, membantu','Dilayani adil tanpa diskriminasi','Tanpa imbalan di luar aturan','Konsultasi & pengaduan mudah diakses','Sarana & prasarana mendukung layanan'];
+var UN=[['Persyaratan',[0,1]],['Prosedur',[2,3,4]],['Waktu',[5]],['Biaya',[6,7,8]],['Produk',[9]],['Kompetensi',[10]],['Perilaku',[11,12,13]],['Aduan',[14]],['Sarpras',[15]]];
+var SPKP=[0,1,2,3,5,6,9,10,11,14,15],SPAK=[4,7,8,12,13];
+var KN={A:'Sangat Baik',B:'Baik',C:'Kurang Baik',D:'Tidak Baik'};
 var D=null,$=function(i){return document.getElementById(i)};
 function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-function mutu(s){return s>=88.31?'A – Sangat Baik':s>=76.61?'B – Baik':s>=65?'C – Kurang Baik':'D – Tidak Baik'}
+function av(a){var s=0;a.forEach(function(x){s+=x});return a.length?s/a.length:0}
+function kat(n){return n>=3.5324?'A':n>=3.0644?'B':n>=2.6?'C':'D'}
+function calc(sums,n){
+  var p=sums.map(function(s){return n?s/n:0});
+  var u=UN.map(function(x){return av(x[1].map(function(i){return p[i]}))});
+  var nl=av(u);
+  return {p:p,u:u,nl:nl,ikm:nl*25,spkp:av(SPKP.map(function(i){return p[i]}))*25,spak:av(SPAK.map(function(i){return p[i]}))*25};
+}
 async function load(k){
   $('err').textContent='';
   try{var r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'stats',key:k})});var j=await r.json();
@@ -60,31 +80,69 @@ async function load(k){
 function init(){
   var cur=$('per').value,ps=Object.keys(D.periode);
   $('per').innerHTML='<option value="">Semua periode</option>'+ps.map(function(p){return '<option>'+esc(p)+'</option>'}).join('');
-  $('per').value=ps.indexOf(cur)>=0?cur:'';$('gen').textContent='Diperbarui '+new Date(D.dibuat).toLocaleString('id-ID');render();
+  $('per').value=ps.indexOf(cur)>=0?cur:'';
+  $('gen').textContent='Diperbarui '+new Date(D.dibuat).toLocaleString('id-ID')+(D.tidakValid?' · '+D.tidakValid+' baris tidak valid dikecualikan':'');
+  render();
 }
+function mergeMap(dst,src){Object.keys(src).forEach(function(k){var a=dst[k]||(dst[k]={n:0,u:src[k].u.map(function(){return 0})});a.n+=src[k].n;src[k].u.forEach(function(v,i){a.u[i]+=v})})}
 function agg(per){
-  var A={n:0,s:0,u:Q.map(function(){return 0}),lay:{},demo:{jk:{},pend:{},usia:{},kerja:{},dis:{}}};
+  var A={n:0,u:Q.map(function(){return 0}),lay:{},dsb:{},demo:{jk:{},pend:{},usia:{},kerja:{},dis:{}}};
   Object.keys(D.periode).forEach(function(p){
-    if(per&&p!==per)return;var P=D.periode[p];A.n+=P.n;A.s+=P.s;P.u.forEach(function(x,i){A.u[i]+=x});
-    Object.keys(P.lay).forEach(function(l){var a=A.lay[l]||(A.lay[l]={n:0,s:0});a.n+=P.lay[l].n;a.s+=P.lay[l].s});
+    if(per&&p!==per)return;var P=D.periode[p];A.n+=P.n;P.u.forEach(function(x,i){A.u[i]+=x});
+    mergeMap(A.lay,P.lay);mergeMap(A.dsb,P.dsb);
     Object.keys(A.demo).forEach(function(g){Object.keys(P.demo[g]).forEach(function(k){A.demo[g][k]=(A.demo[g][k]||0)+P.demo[g][k]})});
   });return A;
 }
 function bars(items,max,fmt){return items.map(function(x){return '<div class="b"><span>'+esc(x[0])+'</span><div class="t"><i style="width:'+Math.round(x[1]/max*100)+'%"></i></div><em>'+fmt(x[1])+'</em></div>'}).join('')||'<small>Belum ada data.</small>'}
+function f2(x){return x.toFixed(2)}
+function matrix(map,A,total,pTab,uTab){
+  var names=Object.keys(map).sort();
+  $(pTab).innerHTML='<tr><th>Kategori</th><th class="n">n</th>'+Q.map(function(_,i){return '<th class="n" title="'+esc(Q[i])+'">P'+(i+1)+'</th>'}).join('')+'</tr>'+
+    names.map(function(k){var c=calc(map[k].u,map[k].n);return '<tr><td class="w">'+esc(k)+'</td><td class="n">'+map[k].n+'</td>'+c.p.map(function(v){return '<td class="n">'+f2(v)+'</td>'}).join('')+'</tr>'}).join('')+
+    (A.n?'<tr class="gt"><td>Grand Total</td><td class="n">'+A.n+'</td>'+total.p.map(function(v){return '<td class="n">'+f2(v)+'</td>'}).join('')+'</tr>':'')||'<tr><td>Belum ada data.</td></tr>';
+  $(uTab).innerHTML='<tr><th>Kategori</th>'+UN.map(function(u,i){return '<th class="n" title="'+u[0]+'">U'+(i+1)+'</th>'}).join('')+'<th class="n">IKM</th><th>Mutu</th></tr>'+
+    names.map(function(k){var c=calc(map[k].u,map[k].n),m=kat(c.nl);return '<tr><td class="w">'+esc(k)+'</td>'+c.u.map(function(v){return '<td class="n">'+f2(v*25)+'</td>'}).join('')+'<td class="n"><b>'+f2(c.ikm)+'</b></td><td><span class="pill">'+m+'</span></td></tr>'}).join('')+
+    (A.n?'<tr class="gt"><td>Grand Total</td>'+total.u.map(function(v){return '<td class="n">'+f2(v*25)+'</td>'}).join('')+'<td class="n">'+f2(total.ikm)+'</td><td><span class="pill">'+kat(total.nl)+'</span></td></tr>':'')||'<tr><td>Belum ada data.</td></tr>';
+}
 function render(){
-  var per=$('per').value,A=agg(per),ikm=A.n?A.s/A.n:0;
-  $('kpi').innerHTML='<div class="k"><b>'+A.n+'</b><small>Penilaian layanan masuk</small></div><div class="k"><b>'+ikm.toFixed(2)+'</b><small>Nilai IKM (25–100)</small></div><div class="k"><b>'+(A.n?mutu(ikm).split(' – ')[0]:'-')+'</b><small>'+(A.n?mutu(ikm).split(' – ')[1]:'Belum ada data')+'</small></div><div class="k"><b>'+Object.keys(A.lay).length+'</b><small>Jenis layanan terisi</small></div>';
-  $('unsur').innerHTML=bars(Q.map(function(q,i){return [(i+1)+'. '+q,A.n?A.u[i]/A.n:0]}),4,function(v){return v.toFixed(2)});
-  $('lay').innerHTML='<tr><th>Layanan</th><th>Penilaian</th><th>IKM</th><th>Mutu</th></tr>'+Object.keys(A.lay).sort().map(function(l){var a=A.lay[l],v=a.s/a.n;return '<tr><td>'+esc(l)+'</td><td>'+a.n+'</td><td>'+v.toFixed(2)+'</td><td>'+mutu(v)+'</td></tr>'}).join('');
-  var T={jk:'Jenis kelamin',pend:'Pendidikan',usia:'Usia',kerja:'Pekerjaan',dis:'Penyandang disabilitas'};
-  $('demo').innerHTML=Object.keys(T).map(function(g){var it=Object.keys(A.demo[g]).map(function(k){return [k,A.demo[g][k]]}).sort(function(a,b){return b[1]-a[1]});
-    return '<div><b>'+T[g]+'</b>'+bars(it,A.n||1,function(v){return v+' ('+Math.round(v/(A.n||1)*100)+'%)'})+'</div>'}).join('');
+  var per=$('per').value,A=agg(per),T=calc(A.u,A.n),m=kat(T.nl);
+  $('kpi').innerHTML='<div class="k"><b>'+A.n+'</b><small>Responden (penilaian valid)</small></div><div class="k"><b>'+(A.n?f2(T.ikm):'-')+'</b><small>IKM konversi (25–100)</small></div><div class="k"><b>'+(A.n?m:'-')+'</b><small>'+(A.n?'Mutu '+KN[m]:'Belum ada data')+'</small></div><div class="k"><b>'+(A.n?f2(T.spkp):'-')+'</b><small>SPKP</small></div><div class="k"><b>'+(A.n?f2(T.spak):'-')+'</b><small>SPAK</small></div>';
+  $('unsur').innerHTML='<tr><th>Unsur</th><th>Pertanyaan</th><th class="n">Nilai (1–4)</th><th class="n">Konversi</th><th>Kategori</th></tr>'+UN.map(function(x,i){return '<tr><td>U'+(i+1)+'. '+x[0]+'</td><td>'+x[1].map(function(j){return 'P'+(j+1)}).join(', ')+'</td><td class="n">'+f2(T.u[i])+'</td><td class="n">'+f2(T.u[i]*25)+'</td><td><span class="pill">'+kat(T.u[i])+'</span></td></tr>'}).join('')+
+    '<tr class="gt"><td>IKM</td><td></td><td class="n">'+f2(T.nl)+'</td><td class="n">'+f2(T.ikm)+'</td><td><span class="pill">'+m+'</span></td></tr>';
+  var pr=A.n?UN.map(function(x,i){return [i,T.u[i]]}).sort(function(a,b){return a[1]-b[1]}).slice(0,3):[];
+  $('prio').innerHTML=pr.map(function(x){return '<li><b>'+UN[x[0]][0]+'</b> — nilai '+f2(x[1])+' (konversi '+f2(x[1]*25)+', kategori '+kat(x[1])+')</li>'}).join('')||'<small>Belum ada data.</small>';
+  $('pq').innerHTML=bars(Q.map(function(q,i){return ['P'+(i+1)+'. '+q,T.p[i]]}),4,function(v){return f2(v)+' · '+f2(v*25)});
+  matrix(A.lay,A,T,'layP','layU');matrix(A.dsb,A,T,'dsbP','dsbU');
+  var lay=Object.keys(A.lay).map(function(k){return [k,A.lay[k].n]}).sort(function(a,b){return b[1]-a[1]});
+  var dsb=Object.keys(A.dsb).map(function(k){return [k,A.dsb[k].n]}).sort(function(a,b){return b[1]-a[1]});
+  var G=[['Jenis layanan',lay],['Jenis kelamin','jk'],['Pendidikan','pend'],['Usia','usia'],['Pekerjaan','kerja'],['Kategori pengguna layanan','dis'],['Jenis disabilitas',dsb]],N=A.n||1;
+  $('demo').innerHTML=G.map(function(g){var it=typeof g[1]==='string'?Object.keys(A.demo[g[1]]).map(function(k){return [k,A.demo[g[1]][k]]}).sort(function(a,b){return b[1]-a[1]}):g[1];
+    return '<div><b>'+g[0]+'</b>'+bars(it,N,function(v){return v+' ('+Math.round(v/N*100)+'%)'})+'</div>'}).join('');
   var sr=D.saran.filter(function(x){return !per||x.p===per});
   $('saran').innerHTML=sr.length?sr.map(function(x){return '<div class="sr">'+esc(x.s)+'<small>'+esc(x.p)+' · '+esc(x.l)+(x.t?' · '+esc(x.t):'')+'</small></div>'}).join(''):'<small>Belum ada kritik atau saran.</small>';
+  sampel(A.n);
+}
+function sampel(n){
+  var N=+$('pop').value;
+  if(!(N>1)){$('samp').textContent='Isi jumlah populasi untuk melihat sampel minimal.';$('sampB').style.width='0';return}
+  var s=Math.ceil((3.841*N*0.25)/((N-1)*0.0025+3.841*0.25));
+  $('samp').textContent='Sampel minimal: '+s+' · Terkumpul: '+n+' ('+Math.min(100,Math.round(n/s*100))+'%)'+(n>=s?' ✓ terpenuhi':'');
+  $('sampB').style.width=Math.min(100,n/s*100)+'%';
+}
+function csv(){
+  var per=$('per').value,A=agg(per),T=calc(A.u,A.n),m=kat(T.nl);
+  var rows=[['REKAP SKM 16 ITEM',per||'Semua periode'],[],['Unsur','Pertanyaan','Nilai (1-4)','Nilai konversi','Kategori']];
+  UN.forEach(function(x,i){rows.push([x[0],x[1].map(function(j){return 'P'+(j+1)}).join(' '),T.u[i].toFixed(4),(T.u[i]*25).toFixed(2),kat(T.u[i])])});
+  rows.push([],['Jumlah responden',A.n],['IKM (1-4)',T.nl.toFixed(4)],['IKM konversi',T.ikm.toFixed(2)],['Mutu layanan',m],['SPKP',T.spkp.toFixed(2)],['SPAK',T.spak.toFixed(2)]);
+  rows.push([],['Pertanyaan','Nilai rata-rata','Nilai konversi']);Q.forEach(function(q,i){rows.push(['P'+(i+1)+' '+q,T.p[i].toFixed(4),(T.p[i]*25).toFixed(2)])});
+  var t=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(',')}).join('\r\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+t],{type:'text/csv'}));a.download='rekap-skm.csv';a.click();
 }
 $('go').onclick=function(){load($('key').value)};$('key').onkeydown=function(e){if(e.key==='Enter')load(this.value)};
-$('per').onchange=render;$('reload').onclick=function(){load(sessionStorage.getItem('skmKey')||'')};
+$('per').onchange=render;$('reload').onclick=function(){load(sessionStorage.getItem('skmKey')||'')};$('csv').onclick=csv;
+$('pop').oninput=function(){try{localStorage.setItem('skmPop',this.value)}catch(e){}render()};
 $('logout').onclick=function(){sessionStorage.removeItem('skmKey');location.reload()};
+try{$('pop').value=localStorage.getItem('skmPop')||''}catch(e){}
 var k0=sessionStorage.getItem('skmKey');if(k0)load(k0);
 </script>
 </body>
