@@ -4,6 +4,27 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Survei Kepuasan Masyarakat – KPU Kabupaten Hulu Sungai Tengah 2026</title>
+<meta name="description" content="Bantu kami berbenah: nilai layanan KPU Kabupaten Hulu Sungai Tengah. Hanya 2–3 menit.">
+<meta name="theme-color" content="#7d1410">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="canonical" href="https://kpuhstrendatin.github.io/skmtahun2026/">
+<!-- Pratinjau tautan (WhatsApp, Facebook, Telegram, dll). Jika nama repositori/alamat situs berubah, ganti https://kpuhstrendatin.github.io/skmtahun2026/ di bawah ini -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="KPU Kabupaten Hulu Sungai Tengah">
+<meta property="og:locale" content="id_ID">
+<meta property="og:title" content="Survei Kepuasan Masyarakat 2026 | KPU Hulu Sungai Tengah">
+<meta property="og:description" content="Bantu kami berbenah: nilai layanan KPU Kabupaten Hulu Sungai Tengah. Hanya 2–3 menit.">
+<meta property="og:url" content="https://kpuhstrendatin.github.io/skmtahun2026/">
+<meta property="og:image" content="https://kpuhstrendatin.github.io/skmtahun2026/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logo KPU dan tulisan Survei Kepuasan Masyarakat (SKM) Tahun 2026 KPU Kabupaten Hulu Sungai Tengah">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Survei Kepuasan Masyarakat 2026 | KPU Hulu Sungai Tengah">
+<meta name="twitter:description" content="Bantu kami berbenah: nilai layanan KPU Kabupaten Hulu Sungai Tengah. Hanya 2–3 menit.">
+<meta name="twitter:image" content="https://kpuhstrendatin.github.io/skmtahun2026/og-image.png">
 <style>
 :root{--bg:#f6f1f0;--card:#fff;--ink:#241a1a;--mut:#6b5b5b;--line:#e3d6d4;--pri:#9b1c24;--pri2:#7a1219;--soft:#fbeeee;--ok:#1d7a46;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171212;--card:#221a1a;--ink:#f3eaea;--mut:#b5a3a3;--line:#3a2d2d;--pri:#e0525a;--pri2:#c93f47;--soft:#2e1d1e;--ok:#4cc585}}
@@ -93,6 +114,8 @@ main{position:relative;z-index:2}
 .priv{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:0 0 8px;font-size:14px;background:var(--soft)}
 .priv summary{cursor:pointer;color:var(--pri);font-weight:600}.priv div{margin-top:6px;color:var(--mut)}
 .rep .priv{display:none}
+.share{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:14px}
+.wa{background:#1fa855;border-color:#1fa855}
 </style>
 </head>
 <body>
@@ -113,6 +136,8 @@ main{position:relative;z-index:2}
       <h2>Pilih Periode Survei</h2>
       <p class="sub">Silakan pilih periode layanan yang ingin Anda nilai. Hanya periode yang sedang dibuka yang dapat dipilih.</p>
       <div class="pgrid" id="pgrid"></div>
+      <div class="share"><b>Ajak orang lain ikut menilai</b>
+        <div class="row" style="margin-top:8px"><button type="button" class="wa shWa">Bagikan ke WhatsApp</button><button type="button" class="s shCopy">Salin tautan</button><button type="button" class="s shNative hide">Bagikan…</button></div></div>
     </div>
   </section>
   <div id="viewForm" class="hide">
@@ -152,6 +177,8 @@ main{position:relative;z-index:2}
     <div class="sub" style="margin:4px 0 0">Nilai kepuasan Anda (skala 25–100)</div>
     <div class="badge" id="mutu"></div>
     <details class="det"><summary>Lihat rincian penilaian Anda</summary><div id="detail"></div></details>
+    <div class="share" style="text-align:center"><b>Ajak keluarga &amp; teman ikut menilai</b>
+      <div class="row" style="justify-content:center;margin-top:8px"><button type="button" class="wa shWa">Bagikan ke WhatsApp</button><button type="button" class="s shCopy">Salin tautan</button><button type="button" class="s shNative hide">Bagikan…</button></div></div>
     <p class="sub" id="note" style="margin-top:12px;color:var(--pri)"></p>
     <div class="cta">
       <div class="cta-ic" id="ctaIc">🙌</div>
@@ -545,6 +572,15 @@ $('backTop').addEventListener('click',backPick);$('backRes').addEventListener('c
 renderPick();
 $('namaL').innerHTML=NAMA_WAJIB?'Nama Lengkap <span class="req">*</span>':'Nama <small style="font-weight:400;color:var(--mut)">(opsional — boleh dikosongkan atau diisi inisial)</small>';
 flush();
+// ===== Bagikan tautan =====
+function shLink(){var u=location.origin+location.pathname;return u+(cur?'#'+cur.id:'')}
+function shText(){return 'Mari nilai layanan KPU Kabupaten Hulu Sungai Tengah — Survei Kepuasan Masyarakat 2026. Hanya 2–3 menit: '+shLink()}
+document.querySelectorAll('.shWa').forEach(function(b){b.addEventListener('click',function(){window.open('https://wa.me/?text='+encodeURIComponent(shText()),'_blank','noopener')})});
+document.querySelectorAll('.shCopy').forEach(function(b){b.addEventListener('click',function(){
+  var t=shLink(),done=function(){var o=b.textContent;b.textContent='Tersalin ✓';setTimeout(function(){b.textContent=o},1800)};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,function(){prompt('Salin tautan ini:',t)});else prompt('Salin tautan ini:',t);
+})});
+if(navigator.share)document.querySelectorAll('.shNative').forEach(function(b){b.classList.remove('hide');b.addEventListener('click',function(){navigator.share({title:'Survei Kepuasan Masyarakat 2026',text:'Mari nilai layanan KPU Kabupaten Hulu Sungai Tengah. Hanya 2–3 menit.',url:shLink()}).catch(function(){})})});
 var h=location.hash.slice(1);PERIODE.forEach(function(p){if(p.id===h&&p.aktif)openP(p)});
 })();
 </script>
