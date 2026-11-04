@@ -8,14 +8,12 @@
 <meta name="theme-color" content="#7d1410">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="canonical" href="https://kpuhstrendatin.github.io/skmtahun2026/">
 <!-- Pratinjau tautan (WhatsApp, Facebook, Telegram, dll). Jika nama repositori/alamat situs berubah, ganti https://kpuhstrendatin.github.io/skmtahun2026/ di bawah ini -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="KPU Kabupaten Hulu Sungai Tengah">
 <meta property="og:locale" content="id_ID">
 <meta property="og:title" content="Survei Kepuasan Masyarakat 2026 | KPU Hulu Sungai Tengah">
 <meta property="og:description" content="Bantu kami berbenah: nilai layanan KPU Kabupaten Hulu Sungai Tengah. Hanya 2–3 menit.">
-<meta property="og:url" content="https://kpuhstrendatin.github.io/skmtahun2026/">
 <meta property="og:image" content="https://kpuhstrendatin.github.io/skmtahun2026/og-image.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
@@ -59,7 +57,7 @@ button{font:inherit;font-weight:600;padding:12px 22px;border-radius:10px;border:
 .badge{display:inline-block;margin:10px 0;padding:5px 14px;border-radius:99px;background:var(--soft);color:var(--pri);font-weight:600}
 .row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);text-align:left;font-size:14px}
 footer{text-align:center;color:var(--mut);font-size:12px;padding:0 14px 24px}
-.hide{display:none}
+.hide{display:none!important}
 
 .hero{position:relative;overflow:hidden;color:#fff;text-align:center;padding:22px 16px 62px;background:linear-gradient(90deg,#7d1410 0%,#3a0808 50%,#7d1410 100%)}
 .hero::before{content:"";position:absolute;inset:38% 8% 0;opacity:.07;background:
@@ -156,7 +154,7 @@ main{position:relative;z-index:2}
       <div class="q-block" data-k="layanan"><span class="q-t">Jenis layanan yang diterima <span class="req">*</span></span><select id="layanan"></select><div class="msg">Pilih jenis layanan yang Anda terima.</div></div>
       <div class="q-block" data-k="jk"><span class="q-t">Jenis Kelamin <span class="req">*</span></span><div id="jk"></div><div class="msg">Pilih salah satu.</div></div>
       <div class="q-block" data-k="pend"><label class="q" for="pend">Pendidikan <span class="req">*</span></label><select id="pend"></select><div class="msg">Pilih pendidikan.</div></div>
-      <div class="q-block" data-k="usia"><label class="q" for="usia">Usia</label><select id="usia"></select></div>
+      <div class="q-block" data-k="usia"><label class="q" for="usia">Usia <span class="req">*</span></label><select id="usia"></select><div class="msg">Pilih kelompok usia.</div></div>
       <div class="q-block" data-k="kerja"><span class="q-t">Pekerjaan <span class="req">*</span></span><select id="kerja"></select><input type="text" id="kerjaLain" class="hide" placeholder="Tuliskan pekerjaan Anda" style="margin-top:6px"><div class="msg">Pilih pekerjaan.</div></div>
       <div class="q-block" data-k="dis"><span class="q-t">Apakah Anda penyandang disabilitas / pendamping penyandang disabilitas? <span class="req">*</span></span><div id="dis"></div><div class="msg">Pilih salah satu.</div></div>
       <div class="q-block hide" id="disBox" data-k="disjenis"><span class="q-t">Jenis disabilitas apa yang Anda miliki/dampingi? <span class="req">*</span></span><div id="disJenis"></div><div class="msg">Pilih minimal satu jenis disabilitas.</div></div>
@@ -412,8 +410,9 @@ function showStep(i){
   progress();window.scrollTo({top:0,behavior:'smooth'});
 }
 function progress(){
-  var dj=val('dis')==='Ya',total=7+U.length+(dj?1:0),done=0;
+  var dj=val('dis')==='Ya',total=8+U.length+(dj?1:0),done=0;
   if(val('layanan'))done++;
+  if($('usia').value)done++;
   if(NAMA_WAJIB?$('nama').value.trim():$('setuju').checked)done++;
   if($('tgl').value)done++;
   if(val('jk'))done++;
@@ -448,7 +447,7 @@ function runChecks(scope){
   chk('layanan',!!val('layanan'));
   chk('setuju',$('setuju').checked);chk('nama',!NAMA_WAJIB||!!$('nama').value.trim());
   var t=$('tgl').value;chk('tgl',!!t&&t>=cur.rentang[0]&&t<=cur.rentang[1]);
-  chk('jk',!!val('jk'));chk('pend',!!$('pend').value);
+  chk('jk',!!val('jk'));chk('usia',!!$('usia').value);chk('pend',!!$('pend').value);
   chk('kerja',!!val('kerja')&&(val('kerja')!=='Lainnya'||!!$('kerjaLain').value.trim()));
   chk('dis',!!val('dis'));
   chk('disjenis',val('dis')!=='Ya'||disSel().length>0);
@@ -573,14 +572,15 @@ renderPick();
 $('namaL').innerHTML=NAMA_WAJIB?'Nama Lengkap <span class="req">*</span>':'Nama <small style="font-weight:400;color:var(--mut)">(opsional — boleh dikosongkan atau diisi inisial)</small>';
 flush();
 // ===== Bagikan tautan =====
-function shLink(){var u=location.origin+location.pathname;return u+(cur?'#'+cur.id:'')}
+var SHARE_V='2'; // naikkan angka ini (3, 4, ...) setiap gambar/judul pratinjau diganti agar WhatsApp memuat ulang
+function shLink(){var u=location.origin+location.pathname+'?v='+SHARE_V;return u+(cur?'#'+cur.id:'')}
 function shText(){return 'Mari nilai layanan KPU Kabupaten Hulu Sungai Tengah — Survei Kepuasan Masyarakat 2026. Hanya 2–3 menit: '+shLink()}
 document.querySelectorAll('.shWa').forEach(function(b){b.addEventListener('click',function(){window.open('https://wa.me/?text='+encodeURIComponent(shText()),'_blank','noopener')})});
 document.querySelectorAll('.shCopy').forEach(function(b){b.addEventListener('click',function(){
   var t=shLink(),done=function(){var o=b.textContent;b.textContent='Tersalin ✓';setTimeout(function(){b.textContent=o},1800)};
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,function(){prompt('Salin tautan ini:',t)});else prompt('Salin tautan ini:',t);
 })});
-if(navigator.share)document.querySelectorAll('.shNative').forEach(function(b){b.classList.remove('hide');b.addEventListener('click',function(){navigator.share({title:'Survei Kepuasan Masyarakat 2026',text:'Mari nilai layanan KPU Kabupaten Hulu Sungai Tengah. Hanya 2–3 menit.',url:shLink()}).catch(function(){})})});
+if(navigator.share)document.querySelectorAll('.shNative').forEach(function(b){b.classList.remove('hide');b.addEventListener('click',function(){navigator.share({title:'Survei Kepuasan Masyarakat 2026',text:'Mari nilai layanan KPU Kabupaten Hulu Sungai Tengah — Survei Kepuasan Masyarakat 2026. Hanya 2–3 menit.',url:shLink()}).catch(function(){})})});
 var h=location.hash.slice(1);PERIODE.forEach(function(p){if(p.id===h&&p.aktif)openP(p)});
 })();
 </script>
