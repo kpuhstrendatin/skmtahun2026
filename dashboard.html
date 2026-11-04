@@ -28,7 +28,27 @@ td.w,th.w{white-space:normal}.n{text-align:right}.gt td{font-weight:700;backgrou
 .sr{padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}.sr small{color:var(--mut);display:block}
 .pill{display:inline-block;min-width:22px;text-align:center;border-radius:6px;padding:0 6px;font-weight:700;background:var(--soft);color:var(--pri)}
 .err{color:var(--pri);margin:8px 0}.hide{display:none}.pr li{margin:4px 0}
-@media print{header,.row,#logout{display:none}.card{break-inside:avoid}}
+.pmeta{display:none}.cols{columns:1}
+@page{size:A4 landscape;margin:8mm}
+@media print{
+ *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ body{background:#fff;color:#000;font-size:11px}
+ header{background:none;color:#7d1410;border-bottom:2px solid #7d1410;padding:0 0 6px;text-align:left}
+ header b{font-size:16px}header span{color:#444}
+ main{max-width:none;padding:0}.noprint,.np{display:none!important}
+ .pmeta{display:block;font-size:11px;margin:6px 0 8px;color:#333}
+ .card{border:1px solid #cfc3c1;background:#fff;padding:8px 10px;margin:0 0 6px;break-inside:avoid;page-break-inside:avoid}
+ .card.flow{break-inside:auto;page-break-inside:auto}
+ .pb{break-before:page;page-break-before:always}
+ h2,.sub{break-after:avoid;page-break-after:avoid}h2{font-size:13px}.sub{font-size:10px;margin-bottom:6px}
+ .kpi{grid-template-columns:repeat(5,1fr)}.k{padding:6px}.k b{font-size:20px}
+ .ov{overflow:visible}
+ table{font-size:9px}th,td{padding:2px 4px}thead{display:table-header-group}tr{break-inside:avoid;page-break-inside:avoid}
+ .b{margin:1px 0;font-size:9.5px;line-height:1.25;grid-template-columns:minmax(110px,44%) 1fr 84px}.b em{white-space:nowrap}.t{height:8px}.g b{font-size:10.5px}
+ .cols{columns:2;column-gap:22px}.cols .b{break-inside:avoid}
+ .g{grid-template-columns:repeat(4,1fr);gap:8px 16px}.g>div{break-inside:avoid}
+ .sr{break-inside:avoid;page-break-inside:avoid;padding:6px 0;font-size:10.5px}
+}
 </style>
 </head>
 <body>
@@ -38,20 +58,21 @@ td.w,th.w{white-space:normal}.n{text-align:right}.gt td{font-weight:700;backgrou
   <div class="row"><input type="password" id="key" placeholder="Kata sandi dashboard" autocomplete="current-password"><button id="go">Masuk</button></div>
   <p class="err" id="err"></p></section>
  <div id="app" class="hide">
-  <section class="card"><div class="row"><b>Periode:</b><select id="per"></select><button class="s" id="reload">Muat ulang</button><button class="s" id="csv">Unduh rekap (CSV)</button><button class="s" onclick="print()">Cetak</button><button class="s" id="logout">Keluar</button><small id="gen" style="color:var(--mut)"></small></div></section>
+  <section class="card noprint"><div class="row"><b>Periode:</b><select id="per"></select><button class="s" id="reload">Muat ulang</button><button class="s" id="csv">Unduh rekap (CSV)</button><button class="s" onclick="print()">Cetak</button><button class="s" id="logout">Keluar</button><small id="gen" style="color:var(--mut)"></small></div></section>
+  <div class="pmeta" id="pm"></div>
   <section class="card"><div class="kpi" id="kpi"></div></section>
-  <section class="card"><h2>Kecukupan sampel</h2><p class="sub">Sampel minimal = (3,841 × N × 0,25) ÷ ((N−1) × 0,0025 + 3,841 × 0,25), sesuai sheet "Rumus Perhitungan Sampel".</p>
-   <div class="row"><label>Populasi (N)</label><input type="number" id="pop" min="1" style="width:130px" placeholder="mis. 1200"><span id="samp"></span></div>
-   <div class="t" style="margin-top:8px;max-width:520px"><i id="sampB" style="width:0"></i></div></section>
   <section class="card"><h2>Hasil per unsur pelayanan</h2><p class="sub">Nilai unsur = rata-rata pertanyaannya · Nilai konversi = nilai × 25 · Kategori: A ≥ 3,5324 · B ≥ 3,0644 · C ≥ 2,6 · D ≥ 1</p><div class="ov"><table id="unsur"></table></div></section>
   <section class="card"><h2>Unsur prioritas perbaikan</h2><p class="sub">Tiga unsur dengan nilai terendah.</p><ol class="pr" id="prio"></ol></section>
-  <section class="card"><h2>Nilai per pertanyaan (skala 1–4)</h2><div id="pq"></div></section>
+  <section class="card" id="sampCard"><h2>Kecukupan sampel</h2><p class="sub">Sampel minimal = (3,841 × N × 0,25) ÷ ((N−1) × 0,0025 + 3,841 × 0,25), sesuai sheet "Rumus Perhitungan Sampel".</p>
+   <div class="row"><span class="noprint"><label>Populasi (N)</label> <input type="number" id="pop" min="1" style="width:130px" placeholder="mis. 1200"></span><span id="samp"></span></div>
+   <div class="t" style="margin-top:8px;max-width:520px"><i id="sampB" style="width:0"></i></div></section>
+  <section class="card pb"><h2>Nilai per pertanyaan (skala 1–4)</h2><div id="pq" class="cols"></div></section>
   <section class="card"><h2>Nilai per jenis layanan</h2><p class="sub">Rata-rata tiap pertanyaan (skala 1–4)</p><div class="ov"><table id="layP"></table></div>
-   <p class="sub" style="margin-top:14px">Nilai konversi per unsur (U1–U9 = Persyaratan … Sarpras) dan IKM</p><div class="ov"><table id="layU"></table></div></section>
-  <section class="card"><h2>Kepuasan kelompok rentan per kategori disabilitas</h2><p class="sub">Responden yang memilih lebih dari satu jenis disabilitas dihitung pada setiap jenis yang dipilih.</p><div class="ov"><table id="dsbP"></table></div>
-   <p class="sub" style="margin-top:14px">Nilai konversi per unsur dan IKM</p><div class="ov"><table id="dsbU"></table></div></section>
+   <p class="sub" style="margin-top:14px">Nilai konversi per unsur dan IKM — U1 Persyaratan · U2 Prosedur · U3 Waktu · U4 Biaya · U5 Produk · U6 Kompetensi · U7 Perilaku · U8 Aduan · U9 Sarpras</p><div class="ov"><table id="layU"></table></div></section>
+  <section class="card pb"><h2>Kepuasan kelompok rentan per kategori disabilitas</h2><p class="sub">Responden yang memilih lebih dari satu jenis disabilitas dihitung pada setiap jenis yang dipilih.</p><div class="ov"><table id="dsbP"></table></div>
+   <p class="sub" style="margin-top:14px">Nilai konversi per unsur dan IKM — U1 Persyaratan · U2 Prosedur · U3 Waktu · U4 Biaya · U5 Produk · U6 Kompetensi · U7 Perilaku · U8 Aduan · U9 Sarpras</p><div class="ov"><table id="dsbU"></table></div></section>
   <section class="card"><h2>Profil responden</h2><div class="g" id="demo"></div></section>
-  <section class="card"><h2>Kritik &amp; saran terbaru</h2><div id="saran"></div></section>
+  <section class="card pb flow"><h2>Kritik &amp; saran terbaru</h2><div id="saran"></div></section>
  </div>
 </main>
 <script>
@@ -97,17 +118,17 @@ function bars(items,max,fmt){return items.map(function(x){return '<div class="b"
 function f2(x){return x.toFixed(2)}
 function matrix(map,A,total,pTab,uTab){
   var names=Object.keys(map).sort();
-  $(pTab).innerHTML='<tr><th>Kategori</th><th class="n">n</th>'+Q.map(function(_,i){return '<th class="n" title="'+esc(Q[i])+'">P'+(i+1)+'</th>'}).join('')+'</tr>'+
+  $(pTab).innerHTML='<thead><tr><th>Kategori</th><th class="n">n</th>'+Q.map(function(_,i){return '<th class="n" title="'+esc(Q[i])+'">P'+(i+1)+'</th>'}).join('')+'</tr></thead>'+
     names.map(function(k){var c=calc(map[k].u,map[k].n);return '<tr><td class="w">'+esc(k)+'</td><td class="n">'+map[k].n+'</td>'+c.p.map(function(v){return '<td class="n">'+f2(v)+'</td>'}).join('')+'</tr>'}).join('')+
     (A.n?'<tr class="gt"><td>Grand Total</td><td class="n">'+A.n+'</td>'+total.p.map(function(v){return '<td class="n">'+f2(v)+'</td>'}).join('')+'</tr>':'')||'<tr><td>Belum ada data.</td></tr>';
-  $(uTab).innerHTML='<tr><th>Kategori</th>'+UN.map(function(u,i){return '<th class="n" title="'+u[0]+'">U'+(i+1)+'</th>'}).join('')+'<th class="n">IKM</th><th>Mutu</th></tr>'+
+  $(uTab).innerHTML='<thead><tr><th>Kategori</th>'+UN.map(function(u,i){return '<th class="n" title="'+u[0]+'">U'+(i+1)+'</th>'}).join('')+'<th class="n">IKM</th><th>Mutu</th></tr></thead>'+
     names.map(function(k){var c=calc(map[k].u,map[k].n),m=kat(c.nl);return '<tr><td class="w">'+esc(k)+'</td>'+c.u.map(function(v){return '<td class="n">'+f2(v*25)+'</td>'}).join('')+'<td class="n"><b>'+f2(c.ikm)+'</b></td><td><span class="pill">'+m+'</span></td></tr>'}).join('')+
     (A.n?'<tr class="gt"><td>Grand Total</td>'+total.u.map(function(v){return '<td class="n">'+f2(v*25)+'</td>'}).join('')+'<td class="n">'+f2(total.ikm)+'</td><td><span class="pill">'+kat(total.nl)+'</span></td></tr>':'')||'<tr><td>Belum ada data.</td></tr>';
 }
 function render(){
   var per=$('per').value,A=agg(per),T=calc(A.u,A.n),m=kat(T.nl);
   $('kpi').innerHTML='<div class="k"><b>'+A.n+'</b><small>Responden (penilaian valid)</small></div><div class="k"><b>'+(A.n?f2(T.ikm):'-')+'</b><small>IKM konversi (25–100)</small></div><div class="k"><b>'+(A.n?m:'-')+'</b><small>'+(A.n?'Mutu '+KN[m]:'Belum ada data')+'</small></div><div class="k"><b>'+(A.n?f2(T.spkp):'-')+'</b><small>SPKP</small></div><div class="k"><b>'+(A.n?f2(T.spak):'-')+'</b><small>SPAK</small></div>';
-  $('unsur').innerHTML='<tr><th>Unsur</th><th>Pertanyaan</th><th class="n">Nilai (1–4)</th><th class="n">Konversi</th><th>Kategori</th></tr>'+UN.map(function(x,i){return '<tr><td>U'+(i+1)+'. '+x[0]+'</td><td>'+x[1].map(function(j){return 'P'+(j+1)}).join(', ')+'</td><td class="n">'+f2(T.u[i])+'</td><td class="n">'+f2(T.u[i]*25)+'</td><td><span class="pill">'+kat(T.u[i])+'</span></td></tr>'}).join('')+
+  $('unsur').innerHTML='<thead><tr><th>Unsur</th><th>Pertanyaan</th><th class="n">Nilai (1–4)</th><th class="n">Konversi</th><th>Kategori</th></tr></thead>'+UN.map(function(x,i){return '<tr><td>U'+(i+1)+'. '+x[0]+'</td><td>'+x[1].map(function(j){return 'P'+(j+1)}).join(', ')+'</td><td class="n">'+f2(T.u[i])+'</td><td class="n">'+f2(T.u[i]*25)+'</td><td><span class="pill">'+kat(T.u[i])+'</span></td></tr>'}).join('')+
     '<tr class="gt"><td>IKM</td><td></td><td class="n">'+f2(T.nl)+'</td><td class="n">'+f2(T.ikm)+'</td><td><span class="pill">'+m+'</span></td></tr>';
   var pr=A.n?UN.map(function(x,i){return [i,T.u[i]]}).sort(function(a,b){return a[1]-b[1]}).slice(0,3):[];
   $('prio').innerHTML=pr.map(function(x){return '<li><b>'+UN[x[0]][0]+'</b> — nilai '+f2(x[1])+' (konversi '+f2(x[1]*25)+', kategori '+kat(x[1])+')</li>'}).join('')||'<small>Belum ada data.</small>';
@@ -120,13 +141,15 @@ function render(){
     return '<div><b>'+g[0]+'</b>'+bars(it,N,function(v){return v+' ('+Math.round(v/N*100)+'%)'})+'</div>'}).join('');
   var sr=D.saran.filter(function(x){return !per||x.p===per});
   $('saran').innerHTML=sr.length?sr.map(function(x){return '<div class="sr">'+esc(x.s)+'<small>'+esc(x.p)+' · '+esc(x.l)+(x.t?' · '+esc(x.t):'')+'</small></div>'}).join(''):'<small>Belum ada kritik atau saran.</small>';
+  $('pm').textContent='Periode: '+(per||'Semua periode')+' · Jumlah responden: '+A.n+' · Dicetak: '+new Date().toLocaleString('id-ID');
   sampel(A.n);
 }
 function sampel(n){
   var N=+$('pop').value;
+  $('sampCard').classList.toggle('np',!(N>1));
   if(!(N>1)){$('samp').textContent='Isi jumlah populasi untuk melihat sampel minimal.';$('sampB').style.width='0';return}
   var s=Math.ceil((3.841*N*0.25)/((N-1)*0.0025+3.841*0.25));
-  $('samp').textContent='Sampel minimal: '+s+' · Terkumpul: '+n+' ('+Math.min(100,Math.round(n/s*100))+'%)'+(n>=s?' ✓ terpenuhi':'');
+  $('samp').textContent='Populasi: '+N+' · Sampel minimal: '+s+' · Terkumpul: '+n+' ('+Math.min(100,Math.round(n/s*100))+'%)'+(n>=s?' ✓ terpenuhi':'');
   $('sampB').style.width=Math.min(100,n/s*100)+'%';
 }
 function csv(){

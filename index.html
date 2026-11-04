@@ -446,7 +446,7 @@ function runChecks(scope){
   function chk(k,ok){var b=f.querySelector('[data-k="'+k+'"]');if(!b||(scope&&!scope.contains(b)))return;b.classList.toggle('bad',!ok);if(!ok)bad.push(b)}
   chk('layanan',!!val('layanan'));
   chk('setuju',$('setuju').checked);chk('nama',!NAMA_WAJIB||!!$('nama').value.trim());
-  var t=$('tgl').value;chk('tgl',!!t&&t>=cur.rentang[0]&&t<=cur.rentang[1]);
+  var t=$('tgl').value;chk('tgl',!!t&&t>=cur.rentang[0]&&t<=cur.rentang[1]&&t<=today());
   chk('jk',!!val('jk'));chk('usia',!!$('usia').value);chk('pend',!!$('pend').value);
   chk('kerja',!!val('kerja')&&(val('kerja')!=='Lainnya'||!!$('kerjaLain').value.trim()));
   chk('dis',!!val('dis'));
@@ -538,7 +538,7 @@ $('again').addEventListener('click',function(){
   t0=Date.now();refreshLayanan();$('layanan').value='';$('saran').value='';
   f.querySelectorAll('input[name^="u"]').forEach(function(x){x.checked=false});
   f.querySelectorAll('.bad').forEach(function(x){x.classList.remove('bad')});
-  $('tgl').value='';
+  $('tgl').value='';setTglMax();
   $('rbText').textContent=$('nama').value.trim()||'Responden';
   setRep(true);
   f.classList.remove('hide');$('prog').classList.remove('hide');$('res').classList.add('hide');showStep(0);
@@ -546,12 +546,15 @@ $('again').addEventListener('click',function(){
 $('rbEdit').addEventListener('click',function(){setRep(false);window.scrollTo({top:0,behavior:'smooth'})});
 
 function showView(v){$('viewPick').classList.toggle('hide',v!=='pick');$('viewForm').classList.toggle('hide',v!=='form');window.scrollTo({top:0,behavior:'smooth'})}
+function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function setTglMax(){if(!cur)return;var t=today();$('tgl').max=t<cur.rentang[1]?t:cur.rentang[1]}
+$('tgl').addEventListener('focus',setTglMax);
 function openP(p){
   cur=p;t0=Date.now();sel('layanan',(p.layanan||LAYANAN.map(function(_,i){return i})).map(function(i){return LAYANAN[i]}));$('perLbl').textContent=p.nama.toUpperCase()+' TAHUN 2026';
   document.title='Survei Kepuasan Masyarakat – '+p.nama+' Tahun 2026 – KPU Kab. Hulu Sungai Tengah';
-  $('tgl').min=p.rentang[0];$('tgl').max=p.rentang[1];
+  $('tgl').min=p.rentang[0];setTglMax();
   $('tglHint').textContent='Periode layanan '+p.nama+': '+p.tgl+'.';
-  $('tglMsg').textContent='Pilih tanggal dalam periode '+p.tgl+'.';
+  $('tglMsg').textContent='Pilih tanggal dalam periode '+p.tgl+'. Tanggal yang belum terjadi tidak dapat dipilih.';
   f.reset();f.classList.remove('hide');$('prog').classList.remove('hide');$('res').classList.add('hide');
   setRep(false);doneL=[];refreshLayanan();$('again').classList.remove('hide');showStep(0);
   try{history.replaceState(null,'','#'+p.id)}catch(e){}
