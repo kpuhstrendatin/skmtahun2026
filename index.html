@@ -14,15 +14,16 @@
 <meta property="og:locale" content="id_ID">
 <meta property="og:title" content="Survei Kepuasan Masyarakat (SKM) | KPU Hulu Sungai Tengah">
 <meta property="og:description" content="Bantu kami berbenah: nilai layanan KPU Kabupaten Hulu Sungai Tengah. Hanya 2–3 menit.">
-<meta property="og:image" content="https://kpuhstrendatin.github.io/skmtahun2026/og-image.png">
-<meta property="og:image:type" content="image/png">
+<meta property="og:image" content="https://kpuhstrendatin.github.io/skmtahun2026/og-skm.jpg">
+<meta property="og:image:secure_url" content="https://kpuhstrendatin.github.io/skmtahun2026/og-skm.jpg">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Logo KPU dan tulisan Survei Kepuasan Masyarakat (SKM) KPU Kabupaten Hulu Sungai Tengah">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Survei Kepuasan Masyarakat (SKM) | KPU Hulu Sungai Tengah">
 <meta name="twitter:description" content="Bantu kami berbenah: nilai layanan KPU Kabupaten Hulu Sungai Tengah. Hanya 2–3 menit.">
-<meta name="twitter:image" content="https://kpuhstrendatin.github.io/skmtahun2026/og-image.png">
+<meta name="twitter:image" content="https://kpuhstrendatin.github.io/skmtahun2026/og-skm.jpg">
 <style>
 :root{--bg:#f6f1f0;--card:#fff;--ink:#241a1a;--mut:#6b5b5b;--line:#e3d6d4;--pri:#9b1c24;--pri2:#7a1219;--soft:#fbeeee;--ok:#1d7a46;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171212;--card:#221a1a;--ink:#f3eaea;--mut:#b5a3a3;--line:#3a2d2d;--pri:#e0525a;--pri2:#c93f47;--soft:#2e1d1e;--ok:#4cc585}}
@@ -604,7 +605,7 @@ renderPick();
 $('namaL').innerHTML=NAMA_WAJIB?'Nama Lengkap <span class="req">*</span>':'Nama <small style="font-weight:400;color:var(--mut)">(opsional — boleh dikosongkan atau diisi inisial)</small>';
 flush();
 // ===== Bagikan tautan =====
-var SHARE_V='3'; // naikkan angka ini (3, 4, ...) setiap gambar/judul pratinjau diganti agar WhatsApp memuat ulang
+var SHARE_V='4'; // naikkan angka ini (3, 4, ...) setiap gambar/judul pratinjau diganti agar WhatsApp memuat ulang
 function shLink(){var u=location.origin+location.pathname+'?v='+SHARE_V;return u+(cur?'#'+cur.id:'')}
 function shText(){return 'Mari nilai layanan KPU Kabupaten Hulu Sungai Tengah — Survei Kepuasan Masyarakat '+tahunIni()+'. Hanya 2–3 menit: '+shLink()}
 document.querySelectorAll('.shWa').forEach(function(b){b.addEventListener('click',function(){window.open('https://wa.me/?text='+encodeURIComponent(shText()),'_blank','noopener')})});
