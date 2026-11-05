@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Survei Kepuasan Masyarakat – KPU Kabupaten Hulu Sungai Tengah 2026</title>
+<title>Survei Kepuasan Masyarakat – KPU Kabupaten Hulu Sungai Tengah</title>
 <meta name="description" content="Bantu kami berbenah: nilai layanan KPU Kabupaten Hulu Sungai Tengah. Hanya 2–3 menit.">
 <meta name="theme-color" content="#7d1410">
 <link rel="icon" type="image/png" href="favicon.png">
@@ -12,15 +12,15 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="KPU Kabupaten Hulu Sungai Tengah">
 <meta property="og:locale" content="id_ID">
-<meta property="og:title" content="Survei Kepuasan Masyarakat 2026 | KPU Hulu Sungai Tengah">
+<meta property="og:title" content="Survei Kepuasan Masyarakat (SKM) | KPU Hulu Sungai Tengah">
 <meta property="og:description" content="Bantu kami berbenah: nilai layanan KPU Kabupaten Hulu Sungai Tengah. Hanya 2–3 menit.">
 <meta property="og:image" content="https://kpuhstrendatin.github.io/skmtahun2026/og-image.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Logo KPU dan tulisan Survei Kepuasan Masyarakat (SKM) Tahun 2026 KPU Kabupaten Hulu Sungai Tengah">
+<meta property="og:image:alt" content="Logo KPU dan tulisan Survei Kepuasan Masyarakat (SKM) KPU Kabupaten Hulu Sungai Tengah">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Survei Kepuasan Masyarakat 2026 | KPU Hulu Sungai Tengah">
+<meta name="twitter:title" content="Survei Kepuasan Masyarakat (SKM) | KPU Hulu Sungai Tengah">
 <meta name="twitter:description" content="Bantu kami berbenah: nilai layanan KPU Kabupaten Hulu Sungai Tengah. Hanya 2–3 menit.">
 <meta name="twitter:image" content="https://kpuhstrendatin.github.io/skmtahun2026/og-image.png">
 <style>
@@ -121,7 +121,7 @@ main{position:relative;z-index:2}
   <div class="brand"><img class="logo" src="logo-kpu.png" alt="Logo KPU" onerror="this.style.display='none'">
     <div class="bt"><b>KOMISI PEMILIHAN UMUM</b><span>KABUPATEN HULU SUNGAI TENGAH</span></div></div>
   <h1>SURVEI KEPUASAN MASYARAKAT (SKM)</h1>
-  <h2 id="perLbl">TAHUN 2026</h2>
+  <h2 id="perLbl"></h2>
   <div class="contact">
     <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>kab-hulusungaitengah.kpu.go.id</span>
     <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor"/></svg>kpuhulusungaitengah</span>
@@ -134,6 +134,7 @@ main{position:relative;z-index:2}
       <h2>Pilih Periode Survei</h2>
       <p class="sub">Silakan pilih periode layanan yang ingin Anda nilai. Hanya periode yang sedang dibuka yang dapat dipilih.</p>
       <div class="pgrid" id="pgrid"></div>
+      <p class="sub" id="pgInfo" style="display:none;margin-top:10px">Saat ini belum ada periode survei yang dibuka. Silakan kembali lagi saat periode berikutnya dimulai.</p>
       <div class="share"><b>Ajak orang lain ikut menilai</b>
         <div class="row" style="margin-top:8px"><button type="button" class="wa shWa">Bagikan ke WhatsApp</button><button type="button" class="s shCopy">Salin tautan</button><button type="button" class="s shNative hide">Bagikan…</button></div></div>
     </div>
@@ -190,19 +191,22 @@ main{position:relative;z-index:2}
   </section>
   </div>
 </main>
-<footer>© 2026 KPU Kabupaten Hulu Sungai Tengah · Survei Kepuasan Masyarakat</footer>
+<footer>© <span id="yr"></span> KPU Kabupaten Hulu Sungai Tengah · Survei Kepuasan Masyarakat</footer>
 
 <script>
 (function(){
 // Isi dengan URL Web App Google Apps Script (lihat petunjuk). Jika kosong, data TIDAK dikirim (mode uji).
 // ===== PENGATURAN PERIODE =====
-// Ubah aktif:true untuk membuka periode, aktif:false untuk menutupnya.
+// Buka/tutup periode OTOMATIS mengikuti tanggal 'rentang' (mulai s.d. akhir periode, ditambah GRACE_HARI).
+// Pengecualian (opsional), tambahkan di baris periode: paksa:true = selalu dibuka, paksa:false = selalu ditutup.
 // layanan:[...] = nomor layanan yang bisa dipilih pada periode itu (0=PPID, 1=Pendidikan Pemilih, 2=Pengaduan Masyarakat, 3=Kerjasama, 4=Pemutakhiran Data Pemilih, 5=Verifikasi & Pemutakhiran Data Partai Politik)
-var PERIODE=[
- {id:'tw1',nama:'Triwulan I',ket:'Januari – Maret 2026',tgl:'1 Januari – 31 Maret 2026',rentang:['2026-01-01','2026-03-31'],aktif:false,layanan:[0,1,2,3]},
- {id:'tw2',nama:'Triwulan II (Semester I)',ket:'April – Juni 2026',tgl:'1 April – 30 Juni 2026',rentang:['2026-04-01','2026-06-30'],aktif:false,layanan:[0,1,2,3,4,5]},
- {id:'tw3',nama:'Triwulan III',ket:'Juli – September 2026',tgl:'1 Juli – 30 September 2026',rentang:['2026-07-01','2026-09-30'],aktif:false,layanan:[0,1,2,3]},
- {id:'tw4',nama:'Triwulan IV (Semester II)',ket:'Oktober – Desember 2026',tgl:'1 Oktober – 31 Desember 2026',rentang:['2026-10-01','2026-12-31'],aktif:true,layanan:[0,1,2,3,4,5]}
+var GRACE_HARI=0; // jumlah hari tambahan setelah periode berakhir yang masih boleh mengisi
+var TAHUN_PAKSA=null; // kosong = otomatis mengikuti tahun berjalan; isi angka (mis. 2027) hanya jika perlu memaksa tahun tertentu
+var PERIODE=[ // mulai/akhir = bulan-tanggal; tahunnya otomatis
+ {id:'tw1',nama:'Triwulan I',mulai:'01-01',akhir:'03-31',layanan:[0,1,2,3]},
+ {id:'tw2',nama:'Triwulan II (Semester I)',mulai:'04-01',akhir:'06-30',layanan:[0,1,2,3,4,5]},
+ {id:'tw3',nama:'Triwulan III',mulai:'07-01',akhir:'09-30',layanan:[0,1,2,3]},
+ {id:'tw4',nama:'Triwulan IV (Semester II)',mulai:'10-01',akhir:'12-31',layanan:[0,1,2,3,4,5]}
 ];
 // ===== AKHIR PENGATURAN PERIODE =====
 var cur=null,doneL=[],t0=Date.now();
@@ -470,7 +474,7 @@ f.addEventListener('submit',function(e){
   var pay={waktu_kirim:new Date().toISOString(),nama:$('nama').value.trim(),tanggal_layanan:t,jenis_layanan:val('layanan'),jenis_kelamin:val('jk'),pendidikan:$('pend').value,usia:$('usia').value,
     pekerjaan:val('kerja')==='Lainnya'?'Lainnya: '+$('kerjaLain').value.trim():val('kerja'),disabilitas:val('dis')};
   U.forEach(function(u,n){pay['U'+(n+1)+' '+u[0].replace(/&amp;/g,'&')]=+val('u'+n)});
-  pay.rata_rata=Math.round(ikm/25*100)/100;pay.nilai_ikm=ikm;pay.mutu=mutu(ikm);pay.saran=$('saran').value.trim();pay.periode=cur.nama+' Tahun 2026';pay.jenis_disabilitas=disSel().join('; ');pay.id_kiriman=uid();pay.durasi_detik=Math.round((Date.now()-t0)/1000);pay.persetujuan='Ya';pay.hp=$('hp').value;
+  pay.rata_rata=Math.round(ikm/25*100)/100;pay.nilai_ikm=ikm;pay.mutu=mutu(ikm);pay.saran=$('saran').value.trim();pay.periode=cur.nama+' Tahun '+cur.tahun;pay.jenis_disabilitas=disSel().join('; ');pay.id_kiriman=uid();pay.durasi_detik=Math.round((Date.now()-t0)/1000);pay.persetujuan='Ya';pay.hp=$('hp').value;
   var btn=f.querySelector('button[type=submit]'),old=btn.textContent;btn.disabled=true;btn.textContent='Mengirim…';
   function show(note){
     if(doneL.indexOf(pay.jenis_layanan)<0)doneL.push(pay.jenis_layanan);
@@ -550,8 +554,8 @@ function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+
 function setTglMax(){if(!cur)return;var t=today();$('tgl').max=t<cur.rentang[1]?t:cur.rentang[1]}
 $('tgl').addEventListener('focus',setTglMax);
 function openP(p){
-  cur=p;t0=Date.now();sel('layanan',(p.layanan||LAYANAN.map(function(_,i){return i})).map(function(i){return LAYANAN[i]}));$('perLbl').textContent=p.nama.toUpperCase()+' TAHUN 2026';
-  document.title='Survei Kepuasan Masyarakat – '+p.nama+' Tahun 2026 – KPU Kab. Hulu Sungai Tengah';
+  cur=p;t0=Date.now();sel('layanan',(p.layanan||LAYANAN.map(function(_,i){return i})).map(function(i){return LAYANAN[i]}));$('perLbl').textContent=p.nama.toUpperCase()+' TAHUN '+p.tahun;
+  document.title='Survei Kepuasan Masyarakat – '+p.nama+' Tahun '+p.tahun+' – KPU Kab. Hulu Sungai Tengah';
   $('tgl').min=p.rentang[0];setTglMax();
   $('tglHint').textContent='Periode layanan '+p.nama+': '+p.tgl+'.';
   $('tglMsg').textContent='Pilih tanggal dalam periode '+p.tgl+'. Tanggal yang belum terjadi tidak dapat dipilih.';
@@ -561,30 +565,56 @@ function openP(p){
   progress();showView('form');
 }
 function backPick(){
-  cur=null;$('perLbl').textContent='TAHUN 2026';document.title='Survei Kepuasan Masyarakat – KPU Kabupaten Hulu Sungai Tengah 2026';
+  cur=null;$('perLbl').textContent='TAHUN '+tahunIni();document.title='Survei Kepuasan Masyarakat – KPU Kabupaten Hulu Sungai Tengah';
   try{history.replaceState(null,'',location.pathname)}catch(e){}
   renderPick();showView('pick');
 }
-function renderPick(){
-  $('pgrid').innerHTML=PERIODE.map(function(p,i){
-    return '<button type="button" class="pc'+(p.aktif?'':' off')+'" data-i="'+i+'"'+(p.aktif?'':' disabled aria-disabled="true"')+'><b>'+p.nama+'</b><small>'+p.ket+'</small><em>'+(p.aktif?'Dibuka – klik untuk mengisi':'Belum dibuka / ditutup')+'</em></button>'}).join('');
+var BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+function fmtTgl(t){var a=t.split('-');return (+a[2])+' '+BLN[+a[1]-1]+' '+a[0]}
+function addDays(t,n){var a=t.split('-'),d=new Date(+a[0],+a[1]-1,+a[2]+n);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function statusP(p){
+  if(p.paksa===true)return 'buka';if(p.paksa===false)return 'tutup';
+  var t=today();if(t<p.rentang[0])return 'belum';if(t>addDays(p.rentang[1],GRACE_HARI))return 'tutup';return 'buka';
 }
-$('pgrid').addEventListener('click',function(e){var b=e.target.closest('.pc');if(b&&!b.disabled)openP(PERIODE[+b.getAttribute('data-i')])});
+function tahunIni(){return TAHUN_PAKSA||+today().slice(0,4)}
+function bangun(Y){return PERIODE.map(function(b){
+  var r=[Y+'-'+b.mulai,Y+'-'+b.akhir];
+  return {id:b.id,idDasar:b.id,tahun:Y,nama:b.nama,rentang:r,layanan:b.layanan,paksa:b.paksa,
+    ket:BLN[+b.mulai.slice(0,2)-1]+' – '+BLN[+b.akhir.slice(0,2)-1]+' '+Y,
+    tgl:fmtTgl(r[0]).replace(' '+Y,'')+' – '+fmtTgl(r[1])}})}
+var DAFTAR=[];
+function hitungDaftar(){ // 4 triwulan tahun berjalan; periode tahun lalu ikut tampil selama masih dalam masa GRACE_HARI
+  var Y=tahunIni(),L=bangun(Y);
+  if(!TAHUN_PAKSA)bangun(Y-1).forEach(function(p){if(p.paksa!==false&&statusP(p)==='buka'&&today()>p.rentang[1]){p.id=p.idDasar+'-'+p.tahun;L.unshift(p)}});
+  return L;
+}
+function renderPick(){
+  DAFTAR=hitungDaftar();
+  var adaBuka=false;
+  $('pgrid').innerHTML=DAFTAR.map(function(p,i){
+    var st=statusP(p),on=st==='buka';if(on)adaBuka=true;
+    var lbl=on?'Dibuka · klik untuk mengisi':st==='belum'?'Belum dibuka · dibuka '+fmtTgl(p.rentang[0]):'Sudah ditutup';
+    var sub=on&&p.paksa!==true?'Dibuka sampai '+fmtTgl(addDays(p.rentang[1],GRACE_HARI)):p.ket;
+    return '<button type="button" class="pc'+(on?'':' off')+'" data-i="'+i+'"'+(on?'':' disabled aria-disabled="true"')+'><b>'+p.nama+'</b><small>'+sub+'</small><em>'+lbl+'</em></button>'}).join('');
+  $('pgInfo').style.display=adaBuka?'none':'block';
+}
+$('pgrid').addEventListener('click',function(e){var b=e.target.closest('.pc');if(b&&!b.disabled)openP(DAFTAR[+b.getAttribute('data-i')])});
 $('backTop').addEventListener('click',backPick);$('backRes').addEventListener('click',backPick);
 renderPick();
 $('namaL').innerHTML=NAMA_WAJIB?'Nama Lengkap <span class="req">*</span>':'Nama <small style="font-weight:400;color:var(--mut)">(opsional — boleh dikosongkan atau diisi inisial)</small>';
 flush();
 // ===== Bagikan tautan =====
-var SHARE_V='2'; // naikkan angka ini (3, 4, ...) setiap gambar/judul pratinjau diganti agar WhatsApp memuat ulang
+var SHARE_V='3'; // naikkan angka ini (3, 4, ...) setiap gambar/judul pratinjau diganti agar WhatsApp memuat ulang
 function shLink(){var u=location.origin+location.pathname+'?v='+SHARE_V;return u+(cur?'#'+cur.id:'')}
-function shText(){return 'Mari nilai layanan KPU Kabupaten Hulu Sungai Tengah — Survei Kepuasan Masyarakat 2026. Hanya 2–3 menit: '+shLink()}
+function shText(){return 'Mari nilai layanan KPU Kabupaten Hulu Sungai Tengah — Survei Kepuasan Masyarakat '+tahunIni()+'. Hanya 2–3 menit: '+shLink()}
 document.querySelectorAll('.shWa').forEach(function(b){b.addEventListener('click',function(){window.open('https://wa.me/?text='+encodeURIComponent(shText()),'_blank','noopener')})});
 document.querySelectorAll('.shCopy').forEach(function(b){b.addEventListener('click',function(){
   var t=shLink(),done=function(){var o=b.textContent;b.textContent='Tersalin ✓';setTimeout(function(){b.textContent=o},1800)};
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,function(){prompt('Salin tautan ini:',t)});else prompt('Salin tautan ini:',t);
 })});
-if(navigator.share)document.querySelectorAll('.shNative').forEach(function(b){b.classList.remove('hide');b.addEventListener('click',function(){navigator.share({title:'Survei Kepuasan Masyarakat 2026',text:'Mari nilai layanan KPU Kabupaten Hulu Sungai Tengah — Survei Kepuasan Masyarakat 2026. Hanya 2–3 menit.',url:shLink()}).catch(function(){})})});
-var h=location.hash.slice(1);PERIODE.forEach(function(p){if(p.id===h&&p.aktif)openP(p)});
+if(navigator.share)document.querySelectorAll('.shNative').forEach(function(b){b.classList.remove('hide');b.addEventListener('click',function(){navigator.share({title:'Survei Kepuasan Masyarakat '+tahunIni(),text:'Mari nilai layanan KPU Kabupaten Hulu Sungai Tengah — Survei Kepuasan Masyarakat '+tahunIni()+'. Hanya 2–3 menit.',url:shLink()}).catch(function(){})})});
+$('yr').textContent=tahunIni();if(!cur)$('perLbl').textContent='TAHUN '+tahunIni();
+var h=location.hash.slice(1);DAFTAR.some(function(p){if((p.id===h||p.idDasar===h)&&statusP(p)==='buka'){openP(p);return true}});
 })();
 </script>
 </body>
